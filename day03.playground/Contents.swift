@@ -361,13 +361,7 @@ func howManyTrees(input: String, stepDown: Int, stepRight: Int) -> Int {
     var rowArray = input.components(separatedBy: .newlines)
 
     let howManyNeed = rowArray.count * stepRight
-
-    var anArray = [String]()
-    for (_, char) in rowArray[0].enumerated() {
-        anArray.append(String(char))
-    }
-    
-    let multiplier = howManyNeed / anArray.count
+    let multiplier = howManyNeed / rowArray[0].count
     
     for (index, _) in rowArray.enumerated() {
         for _ in 0...multiplier + 1 {
