@@ -1314,7 +1314,7 @@ func eclValidation(_ string: String) -> Bool {
 }
 
 func passportIDValidation(_ string: String) -> Bool {
-    guard let _ = string.range(of: "[0-9]{9}", options: .regularExpression) else {
+    guard let _ = string.range(of: "^[0-9]{9}$", options: .regularExpression) else {
         return false
     }
     return true
