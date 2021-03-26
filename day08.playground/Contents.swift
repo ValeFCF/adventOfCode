@@ -14,14 +14,15 @@ jmp -4
 acc +6
 """
 
-func firstPart() {
-    let instructions = input.components(separatedBy: .newlines)
+typealias TupleData = (stopped: Bool, acc: Int)
+
+func knowTuple(instructions: [String]) -> TupleData {
     var accumulator = 0
 
     var stopProgram = false
     var positionToRead = 0
     var savedPositions: [Int] = []
-    while !stopProgram {
+    while !stopProgram && positionToRead < instructions.count {
         let instruction = instructions[positionToRead]
         let words = instruction.split(separator: " ")
         let operation = words[0]
@@ -49,8 +50,61 @@ func firstPart() {
             savedPositions.append(positionToRead)
         }
     }
+    
+    return (stopProgram, accumulator)
+}
 
-    print("first part \(accumulator)")
+func firstPart() {
+    let instructions = input.components(separatedBy: .newlines)
+    let acc = knowTuple(instructions: instructions).acc
+    print("first part \(acc)")
 }
 
 firstPart()
+
+func getIndexArray(instructions: [String]) -> [Int] {
+    var JMPorNOPIndex: [Int] = []
+    for (index, element) in instructions.enumerated() {
+        if element.contains("jmp") || element.contains("nop") {
+            JMPorNOPIndex.append(index)
+        }
+    }
+    return JMPorNOPIndex
+}
+
+func changeInstructions(_ instructions: [String], position: Int) -> [String] {
+    var instructions = instructions
+    if instructions[position].contains("jmp") {
+        instructions[position] = instructions[position].replacingOccurrences(of: "jmp", with: "nop")
+    } else {
+        instructions[position] = instructions[position].replacingOccurrences(of: "nop", with: "jmp")
+    }
+    return instructions
+}
+
+
+func fixInstructionsStep(_ instructions: [String], JMPorNOPIndex: [Int]) -> Int {
+    var accumulator = 0
+    var counterWhile = 0
+    while counterWhile < JMPorNOPIndex.count {
+        let instructionsModified = changeInstructions(instructions,
+                                                      position: JMPorNOPIndex[counterWhile])
+        let tuple = knowTuple(instructions: instructionsModified)
+        if tuple.stopped {
+            counterWhile += 1
+        } else {
+            accumulator = tuple.acc
+            break
+        }
+    }
+    return accumulator
+}
+
+func secondPart() {
+    let instructions = input.components(separatedBy: .newlines)
+    let JMPorNOPIndex = getIndexArray(instructions: instructions)
+    let instructionsFixed = fixInstructionsStep(instructions, JMPorNOPIndex: JMPorNOPIndex)
+    print("second part \(instructionsFixed)")
+}
+
+secondPart()
