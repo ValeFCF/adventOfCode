@@ -25,12 +25,12 @@ let miniInput = """
 576
 """
 
-let stringArray = miniInput.components(separatedBy: .newlines)
+let stringArray = input.components(separatedBy: .newlines)
 let intArray: [Int] = stringArray.map {
     Int($0.trimmingCharacters(in: .whitespacesAndNewlines))!
 }
 
-let preamble = 5
+let preamble = 25
 
 typealias ResultSum = (found: Bool, element: Int)
 
@@ -76,5 +76,29 @@ func firstPart() -> Int {
 }
 
 
-print("element not found: \(firstPart())")
+print("First part: \(firstPart())")
 
+
+func findXSumSliced(elementToFind: Int) -> Int {
+    var leftIndex = 0
+    var rightIndex = leftIndex + 1
+    
+    while leftIndex < rightIndex {
+        let slicedArray = intArray[leftIndex...rightIndex]
+        let currentSum = slicedArray.reduce(0, +)
+        
+        if currentSum == elementToFind {
+            return slicedArray.min()! + slicedArray.max()!
+        } else if currentSum < elementToFind {
+            rightIndex += 1
+        } else {
+            leftIndex += 1
+        }
+    }
+    
+    return 0 //bad result
+}
+
+
+let resultSum = findXSumSliced(elementToFind: firstPart())
+print("Second part: \(resultSum)")
